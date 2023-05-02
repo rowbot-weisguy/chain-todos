@@ -5,87 +5,87 @@ import { SignInButton, SignOutButton } from "@clerk/nextjs";
 
 import { api, type RouterOutputs } from "~/utils/api";
 
-// const PostCard: React.FC<{
-//   page: RouterOutputs["page"]["all"][number];
-//   onPageDelete?: () => void;
-// }> = ({ page, onPageDelete }) => {
-//   return (
-//     <div className="flex flex-row rounded-lg bg-white/10 p-4 transition-all hover:scale-[101%]">
-//       <div className="flex-grow">
-//         <h2 className="text-2xl font-bold text-pink-400">{page.title}</h2>
-//         <p className="mt-2 text-sm">{page.content}</p>
-//       </div>
-//       <div>
-//         <span
-//           className="cursor-pointer text-sm font-bold uppercase text-pink-400"
-//           onClick={onPageDelete}
-//         >
-//           Delete
-//         </span>
-//       </div>
-//     </div>
-//   );
-// };
+const PageCard: React.FC<{
+  page: RouterOutputs["page"]["all"][number];
+  onPageDelete?: () => void;
+}> = ({ page, onPageDelete }) => {
+  return (
+    <div className="flex flex-row rounded-lg bg-white/10 p-4 transition-all hover:scale-[101%]">
+      <div className="flex-grow">
+        <h2 className="text-2xl font-bold text-pink-400">{page.title}</h2>
+        <p className="mt-2 text-sm">{page.content}</p>
+      </div>
+      <div>
+        <span
+          className="cursor-pointer text-sm font-bold uppercase text-pink-400"
+          onClick={onPageDelete}
+        >
+          Delete
+        </span>
+      </div>
+    </div>
+  );
+};
 
-// const CreatePostForm: React.FC = () => {
-//   const utils = api.useContext();
+const CreatePostForm: React.FC = () => {
+  const utils = api.useContext();
 
-//   const [title, setTitle] = useState("");
-//   const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
-//   const { mutate, error } = api.page.create.useMutation({
-//     async onSuccess() {
-//       setTitle("");
-//       setContent("");
-//       await utils.page.all.invalidate();
-//     },
-//   });
+  const { mutate, error } = api.page.create.useMutation({
+    async onSuccess() {
+      setTitle("");
+      setContent("");
+      await utils.page.all.invalidate();
+    },
+  });
 
-//   return (
-//     <div className="flex w-full max-w-2xl flex-col p-4">
-//       <input
-//         className="mb-2 rounded bg-white/10 p-2 text-white"
-//         value={title}
-//         onChange={(e) => setTitle(e.target.value)}
-//         placeholder="Title"
-//       />
-//       {error?.data?.zodError?.fieldErrors.title && (
-//         <span className="mb-2 text-red-500">
-//           {error.data.zodError.fieldErrors.title}
-//         </span>
-//       )}
-//       <input
-//         className="mb-2 rounded bg-white/10 p-2 text-white"
-//         value={content}
-//         onChange={(e) => setContent(e.target.value)}
-//         placeholder="Content"
-//       />
-//       {error?.data?.zodError?.fieldErrors.content && (
-//         <span className="mb-2 text-red-500">
-//           {error.data.zodError.fieldErrors.content}
-//         </span>
-//       )}
-//       <button
-//         className="rounded bg-pink-400 p-2 font-bold"
-//         onClick={() => {
-//           mutate({
-//             title,
-//             content,
-//           });
-//         }}
-//       >
-//         Create
-//       </button>
-//     </div>
-//   );
-// };
+  return (
+    <div className="flex w-full max-w-2xl flex-col p-4">
+      <input
+        className="mb-2 rounded bg-white/10 p-2 text-white"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Title"
+      />
+      {error?.data?.zodError?.fieldErrors.title && (
+        <span className="mb-2 text-red-500">
+          {error.data.zodError.fieldErrors.title}
+        </span>
+      )}
+      <input
+        className="mb-2 rounded bg-white/10 p-2 text-white"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder="Content"
+      />
+      {error?.data?.zodError?.fieldErrors.content && (
+        <span className="mb-2 text-red-500">
+          {error.data.zodError.fieldErrors.content}
+        </span>
+      )}
+      <button
+        className="rounded bg-pink-400 p-2 font-bold"
+        onClick={() => {
+          mutate({
+            title,
+            content,
+          });
+        }}
+      >
+        Create
+      </button>
+    </div>
+  );
+};
 
 const Home: NextPage = () => {
-  // const postQuery = api.page.all.useQuery();
+  const pageQuery = api.page.all.useQuery();
 
-  // const deletePostMutation = api.page.delete.useMutation({
-  //   onSettled: () => postQuery.refetch(),
-  // });
+  const deletePageMutation = api.page.delete.useMutation({
+    onSettled: () => pageQuery.refetch(),
+  });
 
   return (
     <>
@@ -101,21 +101,21 @@ const Home: NextPage = () => {
           </h1>
           <AuthShowcase />
 
-          {/* <CreatePostForm />
+          <CreatePostForm />
 
-          {postQuery.data ? (
+          {pageQuery.data ? (
             <div className="w-full max-w-2xl">
-              {postQuery.data?.length === 0 ? (
-                <span>There are no posts!</span>
+              {pageQuery.data?.length === 0 ? (
+                <span>There are no pages!</span>
               ) : (
                 <div className="flex h-[40vh] justify-center overflow-y-scroll px-4 text-2xl">
                   <div className="flex w-full flex-col gap-4">
-                    {postQuery.data?.map((p) => {
+                    {pageQuery.data?.map((p) => {
                       return (
-                        <PostCard
+                        <PageCard
                           key={p.id}
-                          post={p}
-                          onPageDelete={() => deletePostMutation.mutate(p.id)}
+                          page={p}
+                          onPageDelete={() => deletePageMutation.mutate(p.id)}
                         />
                       );
                     })}
@@ -125,7 +125,7 @@ const Home: NextPage = () => {
             </div>
           ) : (
             <p>Loading...</p>
-          )} */}
+          )}
         </div>
       </main>
     </>
