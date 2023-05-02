@@ -15,22 +15,32 @@ model User {
     id    String @id @default(cuid())
     email String
     name  String
+    Page  Page[]
 }
 
 model Page {
-    id      String @id @default(cuid())
-    title   String
-    content String
-    todos   Todo[]
+    id     String  @id @default(cuid())
+    title  String?
+    todos  Todo[]
+    user   User    @relation(fields: [userId], references: [id])
+    userId String
+
+    @@index([userId])
+}
+
+enum TodoStatus {
+    LIVE
+    ARCHIVED
 }
 
 model Todo {
-    id     String @id @default(cuid())
-    title  String
-    body   String
-    status String @default("unchecked")
-    Page   Page   @relation(fields: [pageId], references: [id])
-    pageId String
+    id      String     @id @default(cuid())
+    title   String?
+    body    String?
+    checked Boolean    @default(false)
+    status  TodoStatus @default(LIVE)
+    Page    Page       @relation(fields: [pageId], references: [id])
+    pageId  String
 
     @@index([pageId])
 }
