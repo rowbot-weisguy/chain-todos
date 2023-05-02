@@ -1,91 +1,91 @@
 import { useState } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { signIn, signOut } from "next-auth/react";
+import { SignInButton, SignOutButton } from "@clerk/nextjs";
 
 import { api, type RouterOutputs } from "~/utils/api";
 
-const PostCard: React.FC<{
-  post: RouterOutputs["post"]["all"][number];
-  onPostDelete?: () => void;
-}> = ({ post, onPostDelete }) => {
-  return (
-    <div className="flex flex-row rounded-lg bg-white/10 p-4 transition-all hover:scale-[101%]">
-      <div className="flex-grow">
-        <h2 className="text-2xl font-bold text-pink-400">{post.title}</h2>
-        <p className="mt-2 text-sm">{post.content}</p>
-      </div>
-      <div>
-        <span
-          className="cursor-pointer text-sm font-bold uppercase text-pink-400"
-          onClick={onPostDelete}
-        >
-          Delete
-        </span>
-      </div>
-    </div>
-  );
-};
+// const PostCard: React.FC<{
+//   page: RouterOutputs["page"]["all"][number];
+//   onPageDelete?: () => void;
+// }> = ({ page, onPageDelete }) => {
+//   return (
+//     <div className="flex flex-row rounded-lg bg-white/10 p-4 transition-all hover:scale-[101%]">
+//       <div className="flex-grow">
+//         <h2 className="text-2xl font-bold text-pink-400">{page.title}</h2>
+//         <p className="mt-2 text-sm">{page.content}</p>
+//       </div>
+//       <div>
+//         <span
+//           className="cursor-pointer text-sm font-bold uppercase text-pink-400"
+//           onClick={onPageDelete}
+//         >
+//           Delete
+//         </span>
+//       </div>
+//     </div>
+//   );
+// };
 
-const CreatePostForm: React.FC = () => {
-  const utils = api.useContext();
+// const CreatePostForm: React.FC = () => {
+//   const utils = api.useContext();
 
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+//   const [title, setTitle] = useState("");
+//   const [content, setContent] = useState("");
 
-  const { mutate, error } = api.post.create.useMutation({
-    async onSuccess() {
-      setTitle("");
-      setContent("");
-      await utils.post.all.invalidate();
-    },
-  });
+//   const { mutate, error } = api.page.create.useMutation({
+//     async onSuccess() {
+//       setTitle("");
+//       setContent("");
+//       await utils.page.all.invalidate();
+//     },
+//   });
 
-  return (
-    <div className="flex w-full max-w-2xl flex-col p-4">
-      <input
-        className="mb-2 rounded bg-white/10 p-2 text-white"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Title"
-      />
-      {error?.data?.zodError?.fieldErrors.title && (
-        <span className="mb-2 text-red-500">
-          {error.data.zodError.fieldErrors.title}
-        </span>
-      )}
-      <input
-        className="mb-2 rounded bg-white/10 p-2 text-white"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Content"
-      />
-      {error?.data?.zodError?.fieldErrors.content && (
-        <span className="mb-2 text-red-500">
-          {error.data.zodError.fieldErrors.content}
-        </span>
-      )}
-      <button
-        className="rounded bg-pink-400 p-2 font-bold"
-        onClick={() => {
-          mutate({
-            title,
-            content,
-          });
-        }}
-      >
-        Create
-      </button>
-    </div>
-  );
-};
+//   return (
+//     <div className="flex w-full max-w-2xl flex-col p-4">
+//       <input
+//         className="mb-2 rounded bg-white/10 p-2 text-white"
+//         value={title}
+//         onChange={(e) => setTitle(e.target.value)}
+//         placeholder="Title"
+//       />
+//       {error?.data?.zodError?.fieldErrors.title && (
+//         <span className="mb-2 text-red-500">
+//           {error.data.zodError.fieldErrors.title}
+//         </span>
+//       )}
+//       <input
+//         className="mb-2 rounded bg-white/10 p-2 text-white"
+//         value={content}
+//         onChange={(e) => setContent(e.target.value)}
+//         placeholder="Content"
+//       />
+//       {error?.data?.zodError?.fieldErrors.content && (
+//         <span className="mb-2 text-red-500">
+//           {error.data.zodError.fieldErrors.content}
+//         </span>
+//       )}
+//       <button
+//         className="rounded bg-pink-400 p-2 font-bold"
+//         onClick={() => {
+//           mutate({
+//             title,
+//             content,
+//           });
+//         }}
+//       >
+//         Create
+//       </button>
+//     </div>
+//   );
+// };
 
 const Home: NextPage = () => {
-  const postQuery = api.post.all.useQuery();
+  // const postQuery = api.page.all.useQuery();
 
-  const deletePostMutation = api.post.delete.useMutation({
-    onSettled: () => postQuery.refetch(),
-  });
+  // const deletePostMutation = api.page.delete.useMutation({
+  //   onSettled: () => postQuery.refetch(),
+  // });
 
   return (
     <>
@@ -101,7 +101,7 @@ const Home: NextPage = () => {
           </h1>
           <AuthShowcase />
 
-          <CreatePostForm />
+          {/* <CreatePostForm />
 
           {postQuery.data ? (
             <div className="w-full max-w-2xl">
@@ -115,7 +115,7 @@ const Home: NextPage = () => {
                         <PostCard
                           key={p.id}
                           post={p}
-                          onPostDelete={() => deletePostMutation.mutate(p.id)}
+                          onPageDelete={() => deletePostMutation.mutate(p.id)}
                         />
                       );
                     })}
@@ -125,7 +125,7 @@ const Home: NextPage = () => {
             </div>
           ) : (
             <p>Loading...</p>
-          )}
+          )} */}
         </div>
       </main>
     </>
@@ -139,23 +139,18 @@ const AuthShowcase: React.FC = () => {
 
   const { data: secretMessage } = api.auth.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: !!session?.user },
+    { enabled: !!session?.userId },
   );
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      {session?.user && (
+      {session?.userId && (
         <p className="text-center text-2xl text-white">
-          {session && <span>Logged in as {session?.user?.name}</span>}
+          <span>Logged in as {session.userId}</span>
           {secretMessage && <span> - {secretMessage}</span>}
         </p>
       )}
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={session ? () => void signOut() : () => void signIn()}
-      >
-        {session ? "Sign out" : "Sign in"}
-      </button>
+      {session ? <SignOutButton /> : <SignInButton />}
     </div>
   );
 };

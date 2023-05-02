@@ -3,9 +3,7 @@ import type {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { getServerSession as $getServerSession } from "next-auth";
-
-import { authOptions } from "./auth-options";
+import { getAuth } from "@clerk/nextjs/server";
 
 type GetServerSessionContext =
   | {
@@ -14,5 +12,6 @@ type GetServerSessionContext =
     }
   | { req: NextApiRequest; res: NextApiResponse };
 export const getServerSession = (ctx: GetServerSessionContext) => {
-  return $getServerSession(ctx.req, ctx.res, authOptions);
+  return getAuth(ctx.req);
 };
+export type Session = ReturnType<typeof getServerSession>;
